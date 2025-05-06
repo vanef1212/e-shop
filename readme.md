@@ -1,1 +1,4 @@
-инет магазин 2
+```shell
+.\venv\Scripts\Activate.ps1 
+pip install -r requirements.txt
+```
