@@ -1,11 +1,120 @@
 {% extends "shop/base.html" %}
 
 {% block title %}
-  Thank you
+  Спасибо за заказ
 {% endblock %}
 
 {% block content %}
-  <h1>Thank you</h1>
-  <p>Your order has been successfully completed. Your order number is
+  <h1>Спасибо за заказ!</h1>
+  <p>Ваш заказ успешно оформлен. Номер вашего заказа:
   <strong>{{ order.id }}</strong>.</p>
+  
+  <div class="order-details">
+    <h2>Детали заказа</h2>
+    <p>Пожалуйста, проверьте информацию о вашем заказе:</p>
+    
+    <form id="order-info" class="order-form">
+      <div class="form-group">
+        <label for="first_name">Имя:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ order.first_name }}" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="last_name">Фамилия:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ order.last_name }}" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ order.email }}" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="address">Адрес:</label>
+        <input type="text" id="address" name="address" value="{{ order.address }}" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="postal_code">Почтовый индекс:</label>
+        <input type="text" id="postal_code" name="postal_code" value="{{ order.postal_code }}" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label for="city">Город:</label>
+        <input type="text" id="city" name="city" value="{{ order.city }}" readonly>
+      </div>
+      
+      <h3>Товары в заказе</h3>
+      <table class="order-items">
+        <thead>
+          <tr>
+            <th>Товар</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Сумма</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.price }} ₽</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.get_cost }} ₽</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Итого</strong></td>
+            <td><strong>{{ order.get_total_cost }} ₽</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </form>
+  </div>
+  
+  <style>
+    .order-details {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .order-form .form-group {
+      margin-bottom: 15px;
+    }
+    .order-form label {
+      display: inline-block;
+      width: 150px;
+      font-weight: bold;
+    }
+    .order-form input {
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      background-color: #fff;
+      width: 250px;
+    }
+    .order-form input[readonly] {
+      background-color: #f0f0f0;
+    }
+    .order-items {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .order-items th, .order-items td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    .order-items th {
+      background-color: #f0f0f0;
+    }
+    .order-items tfoot {
+      font-weight: bold;
+    }
+  </style>
 {% endblock %}

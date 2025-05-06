@@ -1,26 +1,137 @@
 {% extends "shop/base.html" %}
 
 {% block title %}
-  Checkout
+  Оформление заказа
 {% endblock %}
 
 {% block content %}
-  <h1>Checkout</h1>
+  <h1>Оформление заказа</h1>
   <div class="order-info">
-    <h3>Your order</h3>
+    <h3>Ваш заказ</h3>
     <ul>
       {% for item in cart %}
         <li>
           {{ item.quantity }}x {{ item.product.name }}
-          <span>${{ item.total_price }}</span>
+          <span>{{ item.total_price }} ₽</span>
         </li>
       {% endfor %}
     </ul>
-    <p>Total: ${{ cart.get_total_price }}</p>
+    <p>Итого: {{ cart.get_total_price }} ₽</p>
   </div>
   <form method="post" class="order-form">
     {{ form.as_p }}
-    <p><input type="submit" value="Place order"></p>
+    <p><input type="submit" value="Оформить заказ"></p>
     {% csrf_token %}
   </form>
+
+  <script>
+    // Добавляем JavaScript для улучшения пользовательского опыта
+    document.addEventListener('DOMContentLoaded', function() {
+      // Если поля уже заполнены (автозаполнение сработало), подсветим их
+      const firstNameField = document.getElementById('id_first_name');
+      const lastNameField = document.getElementById('id_last_name');
+      const emailField = document.getElementById('id_email');
+      
+      if (firstNameField && firstNameField.value) {
+        highlightField(firstNameField);
+      }
+      
+      if (lastNameField && lastNameField.value) {
+        highlightField(lastNameField);
+      }
+      
+      if (emailField && emailField.value) {
+        highlightField(emailField);
+      }
+      
+      function highlightField(field) {
+        // Добавляем стиль для подсветки автозаполненных полей
+        field.style.backgroundColor = '#e8f0fe';
+        field.style.borderColor = '#4285f4';
+        
+        // Добавляем подсказку, что поле автозаполнено
+        const parent = field.parentNode;
+        const hint = document.createElement('small');
+        hint.textContent = 'Автозаполнено из вашего профиля';
+        hint.style.color = '#4285f4';
+        hint.style.display = 'block';
+        hint.style.marginTop = '5px';
+        parent.appendChild(hint);
+      }
+    });
+  </script>
+
+  <style>
+    .order-info {
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      color: #333; /* Темный цвет текста для контраста */
+    }
+    
+    .order-info h3 {
+      color: #333; /* Темный цвет для заголовка */
+    }
+    
+    .order-info ul li {
+      color: #333; /* Темный цвет для элементов списка */
+    }
+    
+    .order-info p {
+      color: #333; /* Темный цвет для итоговой суммы */
+      font-weight: bold;
+    }
+    
+    .order-form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      color: #333; /* Темный цвет текста для контраста */
+    }
+    
+    .order-form label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      color: #333; /* Темный цвет для лейблов */
+    }
+    
+    .order-form p {
+      color: #333; /* Темный цвет для текста в параграфах */
+    }
+    
+    .order-form input[type="text"],
+    .order-form input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      color: #333; /* Темный цвет для текста в полях ввода */
+      background-color: #fff; /* Белый фон для полей ввода */
+    }
+    
+    .order-form input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .order-form input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    
+    /* Стиль для подсказок автозаполнения */
+    .order-form small {
+      color: #4285f4 !important; /* Синий цвет для подсказок */
+    }
+  </style>
 {% endblock %}

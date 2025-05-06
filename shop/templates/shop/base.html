@@ -3,46 +3,61 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Мой интернет-магазин shop{% endblock %}</title>
-    <link href="{% static "css/base.css" %}" rel="stylesheet">
+    <link href="{% static "css/cybershoke.css" %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   </head>
   <body>
     <div id="header">
       <a href="/" class="logo">DRIP SHOP</a>
-        <div class="user-auth">
-            {% if request.user.is_authenticated %}
-                Привет, {{ request.user.username }}!
-                <a href="{% url 'shop:logout' %}">Выйти</a>
-            {% else %}
-                <a href="{% url 'shop:login' %}">Войти</a>
-                <span class="auth-separator">|</span>
-                <a href="{% url 'shop:register' %}">Регистрация</a>
-            {% endif %}
-        </div>
+      <div class="user-auth">
+        {% if request.user.is_authenticated %}
+          <span class="user-greeting"><i class="fas fa-user"></i> Привет, {{ request.user.username }}!</span>
+          <a href="{% url 'shop:logout' %}"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+        {% else %}
+          <a href="{% url 'shop:login' %}"><i class="fas fa-sign-in-alt"></i> Войти</a>
+          <span class="auth-separator">|</span>
+          <a href="{% url 'shop:register' %}"><i class="fas fa-user-plus"></i> Регистрация</a>
+        {% endif %}
+      </div>
     </div>
     <div id="subheader">
-
-
+      <div class="categories-nav">
+        <h3>Категории</h3>
+        <ul>
+          <li {% if not category %}class="selected"{% endif %}>
+            <a href="{% url 'shop:product_list' %}">Все</a>
+          </li>
+          {% for c in categories %}
+          <li {% if category.slug == c.slug %}class="selected"{% endif %}>
+            <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
       <div class="cart">
         {% with total_items=cart|length %}
         {% if total_items > 0 %}
-        Your cart:
-        <a href="{% url "cart:cart_detail" %}">
-        {{ total_items }} item{{ total_items|pluralize }},
-        ${{ cart.get_total_price }}
-        </a>
+          <i class="fas fa-shopping-cart"></i> Корзина:
+          <a href="{% url "cart:cart_detail" %}">
+            {{ total_items }} товар{{ total_items|pluralize:"ов" }},
+            {{ cart.get_total_price }} ₽
+          </a>
         {% else %}
-        Your cart is empty.
+          <i class="fas fa-shopping-cart"></i> Корзина пуста
         {% endif %}
         {% endwith %}
-        
-       
-
       </div>
-
-      
     </div>
     <div id="content">{% block content %} {% endblock %}</div>
-   
+    
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>DRIP SHOP</h3>
+          <p>Лучший магазин стильной одежды и аксессуаров</p>
+        </div>
+    </footer>
   </body>
 </html>

@@ -102,3 +102,5 @@ def register(request):
                  'shop/register.html',
                  {'user_form': user_form})
 
+
+

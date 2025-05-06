@@ -6,20 +6,64 @@
 {% endblock %}
 {% block content %}
   <div class="product-detail">
-    <img src="{% if product.image %}{{ product.image.url }}{% else %}
-    {% static "img/no_image.png" %}{% endif %}">
-    <h1>{{ product.name }}</h1>
-    <h2>
-      <a href="{{ product.category.get_absolute_url }}">
-        {{ product.category }}
-      </a>
-    </h2>
-    <p class="price">${{ product.price }}</p>
-    <form action="{% url "cart:cart_add" product.id %}" method="post">
-      {{ cart_product_form }}
-      {% csrf_token %}
-      <input type="submit" value="Add to cart">
-    </form>
-    {{ product.description|linebreaks }}
+    <div class="product-image">
+      <img src="{% if product.image %}{{ product.image.url }}{% else %}
+      {% static "img/no_image.png" %}{% endif %}">
+    </div>
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <h2>
+        <a href="{{ product.category.get_absolute_url }}">
+          {{ product.category }}
+        </a>
+      </h2>
+      <p class="price">{{ product.price }} ₽</p>
+      <div class="product-description">
+        {{ product.description|linebreaks }}
+      </div>
+      <form action="{% url "cart:cart_add" product.id %}" method="post" class="add-to-cart-form">
+        {{ cart_product_form }}
+        {% csrf_token %}
+        <input type="submit" value="Добавить в корзину">
+      </form>
+    </div>
   </div>
+
+  <style>
+    .product-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+    
+    .product-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .product-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .product-description {
+      margin: 20px 0;
+      order: 3;
+    }
+    
+    .add-to-cart-form {
+      margin-top: 20px;
+      order: 4;
+    }
+    
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+      .product-detail {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 {% endblock %}
