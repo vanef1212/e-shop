@@ -1,2 +1,5 @@
+from .models import Category
+
+
 def categories(request):
-    return {'categories': []}
+    return {'categories': Category.objects.all()}

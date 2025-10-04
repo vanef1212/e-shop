@@ -1,21 +1,107 @@
 {% extends "shop/base.html" %}
-{% load static %}
-{% block title %}
-Товары
-{% endblock %}
+
+{% block title %}Каталог телефонов - PhoneShop{% endblock %}
 
 {% block content %}
-<div id="main" class="product-list">
-  <!-- Заголовок удален -->
-  {% for product in products %}
-  <div class="item">
-    <a href="{{ product.get_absolute_url }}">
-      <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
-    </a>
-    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-    <br>
-    {{ product.price }} ₽
-  </div>
-  {% endfor %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 mb-4">Лучшие телефоны по выгодным ценам</h1>
+        <p class="lead">Широкий выбор смартфонов от ведущих производителей</p>
+    </div>
+</div>
+
+<div class="container my-5">
+    {% if categories %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Категории</h2>
+        </div>
+        {% for category in categories %}
+        <div class="col-md-3 mb-3">
+            <a href="?category={{ category.slug }}" class="category-card d-block">
+                <i class="fas fa-mobile-alt fa-3x mb-3 text-primary"></i>
+                <h5>{{ category.name }}</h5>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                {% if request.GET.category %}
+                    Телефоны в категории
+                {% else %}
+                    Все телефоны
+                {% endif %}
+            </h2>
+        </div>
+        
+        {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card product-card h-100">
+                {% if product.discount_percent %}
+                <div class="discount-badge">-{{ product.discount_percent }}%</div>
+                {% endif %}
+                
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="product-image" alt="{{ product.name }}">
+                {% else %}
+                <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                    <i class="fas fa-mobile-alt fa-4x text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    
+                    {% if product.brand %}
+                    <p class="text-muted mb-1">{{ product.brand }}</p>
+                    {% endif %}
+                    
+                    {% if product.memory %}
+                    <p class="text-muted mb-1">Память: {{ product.memory }}</p>
+                    {% endif %}
+                    
+                    {% if product.color %}
+                    <p class="text-muted mb-2">Цвет: {{ product.color }}</p>
+                    {% endif %}
+                    
+                    <div class="mt-auto">
+                        <div class="mb-3">
+                            {% if product.old_price %}
+                            <span class="old-price me-2">{{ product.old_price }} ₽</span>
+                            {% endif %}
+                            <span class="price">{{ product.price }} ₽</span>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i>Подробнее
+                            </a>
+                            <form action="{% url 'cart:cart_add' product.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="override" value="False">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-shopping-cart me-2"></i>В корзину
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-mobile-alt fa-5x text-muted mb-3"></i>
+                <h3 class="text-muted">Товары не найдены</h3>
+                <p class="text-muted">Попробуйте изменить параметры поиска</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

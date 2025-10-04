@@ -1,69 +1,108 @@
 {% extends "shop/base.html" %}
-{% load static %}
 
-{% block title %}
-  {{ product.name }}
-{% endblock %}
+{% block title %}{{ product.name }} - PhoneShop{% endblock %}
+
 {% block content %}
-  <div class="product-detail">
-    <div class="product-image">
-      <img src="{% if product.image %}{{ product.image.url }}{% else %}
-      {% static "img/no_image.png" %}{% endif %}">
-    </div>
-    <div class="product-info">
-      <h1>{{ product.name }}</h1>
-      <h2>
-        <a href="{{ product.category.get_absolute_url }}">
-          {{ product.category }}
-        </a>
-      </h2>
-      <p class="price">{{ product.price }} ₽</p>
-      <div class="product-description">
-        {{ product.description|linebreaks }}
-      </div>
-      <form action="{% url "cart:cart_add" product.id %}" method="post" class="add-to-cart-form">
-        {{ cart_product_form }}
-        {% csrf_token %}
-        <input type="submit" value="Добавить в корзину">
-      </form>
-    </div>
-  </div>
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'shop:product_list' %}">Каталог</a></li>
+            {% if product.category %}
+            <li class="breadcrumb-item"><a href="?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
 
-  <style>
-    .product-detail {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      align-items: start;
-    }
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+            {% else %}
+            <div class="bg-light rounded shadow d-flex align-items-center justify-content-center" style="height: 400px;">
+                <i class="fas fa-mobile-alt fa-5x text-muted"></i>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-6">
+            <div class="ps-md-4">
+                <h1 class="mb-3">{{ product.name }}</h1>
+                
+                {% if product.brand %}
+                <p class="text-muted mb-2"><strong>Бренд:</strong> {{ product.brand }}</p>
+                {% endif %}
+                
+                {% if product.memory %}
+                <p class="text-muted mb-2"><strong>Память:</strong> {{ product.memory }}</p>
+                {% endif %}
+                
+                {% if product.color %}
+                <p class="text-muted mb-3"><strong>Цвет:</strong> {{ product.color }}</p>
+                {% endif %}
+                
+                {% if product.description %}
+                <div class="mb-4">
+                    <h5>Описание</h5>
+                    <p>{{ product.description|linebreaks }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="mb-4">
+                    {% if product.discount_percent %}
+                    <span class="badge bg-danger mb-2">Скидка {{ product.discount_percent }}%</span>
+                    {% endif %}
+                    
+                    <div>
+                        {% if product.old_price %}
+                        <span class="old-price me-3" style="font-size: 1.2rem;">{{ product.old_price }} ₽</span>
+                        {% endif %}
+                        <span class="price" style="font-size: 2rem;">{{ product.price }} ₽</span>
+                    </div>
+                </div>
+                
+                {% if product.available %}
+                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-3">
+                    {% csrf_token %}
+                    <div class="row align-items-end">
+                        <div class="col-auto">
+                            <label for="quantity" class="form-label">Количество:</label>
+                            <select name="quantity" id="quantity" class="form-select" style="width: 80px;">
+                                {% for i in "123456789"|make_list %}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col">
+                            <input type="hidden" name="override" value="False">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-shopping-cart me-2"></i>Добавить в корзину
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="d-flex gap-2">
+                    <span class="badge bg-success">
+                        <i class="fas fa-check me-1"></i>В наличии
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-truck me-1"></i>Быстрая доставка
+                    </span>
+                    <span class="badge bg-warning">
+                        <i class="fas fa-shield-alt me-1"></i>Гарантия
+                    </span>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Товар временно недоступен
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     
-    .product-image img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-    
-    .product-info {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .product-description {
-      margin: 20px 0;
-      order: 3;
-    }
-    
-    .add-to-cart-form {
-      margin-top: 20px;
-      order: 4;
-    }
-    
-    /* Адаптивность для мобильных устройств */
-    @media (max-width: 768px) {
-      .product-detail {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+
+</div>
 {% endblock %}
