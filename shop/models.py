@@ -44,3 +44,15 @@ class Product(models.Model):
         if self.old_price and self.old_price > self.price:
             return int((self.old_price - self.price) / self.old_price * 100)
         return 0
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="picture")
+    
+    class Meta:
+        verbose_name = 'Фото товара'
+        verbose_name_plural = 'Фото товаров'
+    
+    def __str__(self):
+        return f'Фото {self.product.name}'
